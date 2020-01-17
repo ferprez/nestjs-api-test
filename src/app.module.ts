@@ -5,13 +5,11 @@ import { ProductsModule } from "./products/products.module";
 import { MongooseModule } from "@nestjs/mongoose";
 import { ConfigModule } from "@nestjs/config";
 
-const DB_URL = `mongodb+srv://ferprez:admin123@cluster01-pkdxv.gcp.mongodb.net/products?retryWrites=true&w=majority`;
-
 @Module({
   imports: [
     ProductsModule,
-    MongooseModule.forRoot(DB_URL),
     ConfigModule.forRoot(),
+    MongooseModule.forRoot(process.env.MONGODB_URL),
   ],
   controllers: [AppController],
   providers: [AppService]
