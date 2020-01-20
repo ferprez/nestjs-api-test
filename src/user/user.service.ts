@@ -12,10 +12,32 @@ import { Model } from "mongoose";
 export class UserService {
   constructor(@InjectModel("User") private readonly userModel: Model<User>) {}
 
+  async findById(id: string) {
+    this.userModel.findById(id);
+  }
+
+  async findOne(params: any) {
+    try {
+      const user = await this.userModel.findOne({ ...params }).exec();
+      console.log(user);
+      const { uid, username, email } = user;
+      return {
+        uid,
+        username,
+        email
+      };
+    } catch (error) {
+      // console.log(error.message);
+      throw new HttpException(
+        { message: "Input data validation failed" },
+        HttpStatus.BAD_REQUEST
+      );
+    }
+  }
+
   async create(dto: CreateUserDto) {
     const { email, password } = dto;
-
-    const userExists = await this.userModel.findOne({ email }).exec();
+    const userExists = this.findOne({ email });
     if (userExists) {
       const errorBody = { id: `user with email ${email} already exist` };
       throw new HttpException(

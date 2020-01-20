@@ -8,7 +8,8 @@ import { IAuthRequest } from "../interfaces/IAuthRequest";
 export class FirebaseAuthMiddleware implements NestMiddleware {
   async use(req: IAuthRequest, res: Response, next: Function) {
 
-    if(req.originalUrl === "/user" && req.method === "POST") {
+    console.log(req.originalUrl.slice(0,5));
+    if(req.originalUrl.slice(0, 5) === "/user") {
       return next();
     }
 
