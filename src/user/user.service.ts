@@ -17,27 +17,18 @@ export class UserService {
   }
 
   async findOne(params: any) {
-    try {
-      const user = await this.userModel.findOne({ ...params }).exec();
-      console.log(user);
-      const { uid, username, email } = user;
-      return {
-        uid,
-        username,
-        email
-      };
-    } catch (error) {
-      // console.log(error.message);
-      throw new HttpException(
-        { message: "Input data validation failed" },
-        HttpStatus.BAD_REQUEST
-      );
+    const user = await this.userModel.findOne({ ...params }).exec();
+    if (!user) {
+      return null;
     }
+    const { uid, username, email, firstName, lastName } = user;
+    console.log(user);
+    return { uid, email, firstName, lastName, username };
   }
 
   async create(dto: CreateUserDto) {
     const { email, password } = dto;
-    const userExists = this.findOne({ email });
+    const userExists = await this.findOne({ email });
     if (userExists) {
       const errorBody = { id: `user with email ${email} already exist` };
       throw new HttpException(
