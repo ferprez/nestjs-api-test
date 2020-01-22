@@ -9,13 +9,16 @@ export class FirebaseAuthMiddleware implements NestMiddleware {
   async use(req: IAuthRequest, res: Response, next: Function) {
 
     // console.log(req.originalUrl.slice(0,5));
-    if(req.originalUrl.slice(0, 5) === "/user" && req.method === "POST") {
+    if (req.originalUrl.slice(0, 5) === "/user" && req.method === "POST") {
+      return next();
+    }
+    if (req.originalUrl === "/" && req.method === "GET") {
       return next();
     }
 
     const { authorization } = req.headers;
     // Bearer ezawagawg.....
-    if(!authorization) {
+    if (!authorization) {
       throw new HttpException({ message: "Must provide authorization header" }, HttpStatus.BAD_REQUEST);
     }
     const token = authorization.slice(7);
@@ -29,7 +32,7 @@ export class FirebaseAuthMiddleware implements NestMiddleware {
           HttpStatus.UNAUTHORIZED
         );
       });
-    console.log(user);
+    // console.log(user);
     req.user = user;
     next();
   }
